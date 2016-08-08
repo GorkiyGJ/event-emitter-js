@@ -1,1 +1,1 @@
-export * from './event-emitter-js'
+export default './event-emitter-js'
