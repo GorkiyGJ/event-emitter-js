@@ -33,6 +33,10 @@ class EventEmitter {
         this.events[event].push(listener);
     }
 
+    subscribe(event, listener) {
+        this.on(event, listener)
+    }
+
     removeListener(event, listener) {
         var idx;
 
