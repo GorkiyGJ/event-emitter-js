@@ -71,6 +71,10 @@ class EventEmitter {
             listener.apply(this, arguments);
         });
     }
+
+    dispose(){
+        this.events = []
+    }
 }
 
 export default EventEmitter
