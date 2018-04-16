@@ -31,10 +31,14 @@ class EventEmitter {
         }
 
         this.events[event].push(listener);
+
+        return ()=>{
+            this.removeListener(event, listener)
+        }
     }
 
     subscribe(event, listener) {
-        this.on(event, listener)
+        return this.on(event, listener)
     }
 
     removeListener(event, listener) {
@@ -49,28 +53,37 @@ class EventEmitter {
         }
     }
 
-    emit(event) {
-        Promise.resolve()
-            .then(()=>{
-                var i, listeners, length, args = [].slice.call(arguments, 1);
+    emit(event, sync) {
+        let emit = ()=>{
+            var i, listeners, length, args = [].slice.call(arguments, 1);
 
-                if (typeof this.events[event] === 'object') {
-                    listeners = this.events[event].slice();
-                    length = listeners.length;
+            if (typeof this.events[event] === 'object') {
+                listeners = this.events[event].slice();
+                length = listeners.length;
 
-                    for (i = 0; i < length; i++) {
-                        listeners[i].apply(this, args);
-                    }
+                for (i = 0; i < length; i++) {
+                    listeners[i].apply(this, args);
                 }
-            })
+            }
+        }
+
+        if(sync) {
+            emit()
+        } else {
+            Promise.resolve()
+                .then(()=>{
+                    emit()
+                })
+        }
     }
 
     once(event, listener) {
-        this.on(event, function g () {
+        return this.on(event, function g () {
             this.removeListener(event, g);
             listener.apply(this, arguments);
         });
     }
+
 
     dispose(){
         this.events = []
